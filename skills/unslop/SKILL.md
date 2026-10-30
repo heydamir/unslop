@@ -173,6 +173,7 @@ If the product already has a real brand, like a logo file, a color or a typeface
 - Transition color, background, border, opacity and transform, and name them, like `transition-colors` or `transition-[transform,opacity]` in Tailwind, instead of a catch all. Never animate width, height, top, left, margins or large blurs, they stutter on weak devices.
 - One easing curve and a few durations across the screen, from the tokens. Short for feedback, a little longer for things that enter.
 - At most one entrance on load, a short fade and rise for the main content with a small stagger. Not every card flying in from a different side.
+- Respect `prefers-reduced-motion: reduce`: remove nonessential animation and transitions, and make sure content and controls remain visible and usable without motion.
 
 ## Story video
 
@@ -230,4 +231,5 @@ It adds a few minutes, so make it only when the user wants it.
 - [ ] A hero has a real visual or a product preview with at least one moment, never filler and never a labeled placeholder
 - [ ] The first screen is composed as a whole with no dead empty band
 - [ ] No looping or bouncy motion, one easing curve, no animated layout properties
+- [ ] Reduced-motion preference removes nonessential motion without hiding content or controls
 - [ ] Template check. If you swapped the product name for another product's, would the screen still fit? If yes, push the direction harder in the copy, the visual and the signature detail
