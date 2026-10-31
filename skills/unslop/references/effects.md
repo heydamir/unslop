@@ -102,7 +102,7 @@ Map the image's brightness onto two colors, the darkest surface of the ramp and 
 
 These effects broke on weak laptops before, so keep to these rules.
 
-- Read pixels once when the image loads. Never call `getImageData` inside the animation loop, it stalls the GPU and drops frames to single digits.
+- Read pixels once when the image loads. Never call `getImageData` inside the animation loop; it stalls the GPU and drops frames to single digits.
 - Prepare glyph atlases and tinted cells ahead of time and draw them with `drawImage`.
 - Animate at 8 to 12 steps per second, not 60, and change only a small share of cells per step.
 - Pause when the canvas is off screen.
