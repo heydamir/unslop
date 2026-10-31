@@ -41,7 +41,7 @@ Which visual styles tend to work, and which fail, is in [references/visuals.md](
    - **Heavy slop**, many signs across color, type, icons and copy. Run the full process below.
    - **Light slop**, a screen that is mostly designed with a few signs left. Polish mode. Fix only what the audit found, take the direction from the existing brand instead of inventing a new one, and keep the palette, type, layout and visual. Bigger ideas, like a moment that is missing or a scene for the hero, go into the report as suggestions, not changes.
    - **No slop.** Say so plainly and suggest two or three small refinements at most, with exact values. Apply them only if the user agrees, and stop there. Never change a good screen just to make it different.
-4. **Set the direction and stop.** Write the five lines described below. Show the audit and the direction to the user and wait for their answer before editing, since changing the direction later means redoing everything. Skip the wait only when the user already said to just do it.
+4. **Set the direction and stop.** Write the five lines described below. Show the audit and the direction to the user and wait for their answer before editing, since changing the direction later means redoing everything. Use the structured question tool when available; otherwise ask and stop. Skip the wait only when the user already said to just do it.
 5. **Fix in nine passes, in order.** Finish a pass across the whole screen before starting the next. When nearly every line changes, plan the passes in order and then write the new screen in one go, as long as every pass is applied. Spacing comes first because everything else reads differently once the rhythm is right. Copy comes before type and layout because the length of the headline decides its size and where it sits. Visuals and motion come last because they should fit a screen that already works without them.
 6. **Check.** Run the checklist at the end of this file, render again and compare with the audit list. Anything still on the list gets fixed.
 7. **Report** the direction, a few lines per pass about what changed, and any image prompt you wrote.
@@ -53,7 +53,7 @@ Exact values for every pass live in [references/tokens.md](references/tokens.md)
 
 ## Direction
 
-Before touching anything, write five short lines. Derive them from what the page says the product does and who it is for. Never from what is trending.
+Before touching anything, write five short lines. Derive them from what the page says the product does and who it is for. Never from what is trending. Use the structured question tool when available; otherwise ask and stop.
 
 - **Product.** What it does and for whom, in one plain sentence.
 - **Character.** Two or three concrete words, like `calm, exact, a little warm` or `fast, technical, playful`. Words like clean, modern, sleek, minimal and premium are not allowed, because they describe every template.
@@ -111,6 +111,7 @@ If the product already has a real brand, like a logo file, a color or a typeface
 - Claims that cannot be checked, like `Loved by 10,000+ teams` or `10x faster`, become quiet and specific if the user confirms they are real, and are removed otherwise. Ask, and list them in the report.
 - Mock data looks real, with plausible numbers and names, never `[X]` or `123,456`.
 - Badges like `PRO`, `New ✨` or `Beta 🚀` go away unless the product really needs them, and then they are quiet text.
+- Rewrite every flagged string. If unsure whether a string makes sense, replace it with a plain functional sentence. AI-generated cute copy is worse than boring copy.
 
 ## 5. Type
 
@@ -120,10 +121,13 @@ If the product already has a real brand, like a logo file, a color or a typeface
 - Sentence case everywhere. Labels like `NAVIGATION` or `PAID THIS MONTH` with wide tracking become `Navigation` and `Paid this month`.
 - Small text never gets negative letter spacing. Readability on small text means bigger, a bit bolder or slightly looser. Tight tracking is only for large display text.
 - Numbers use `tabular-nums` and one format across the screen. If one figure is `$48,210`, the next is not `$124,860.40`.
+- Preserve browser zoom, user font settings, Dynamic Type, and platform text scaling.
 - No italic for emphasis.
 
 ## 6. Layout
 
+- Group related content tightly and separate distinct groups generously.
+- Prevent image layout shift; use correct aspect ratios, responsive sources, and useful alt text.
 - Keep the sections and their order. Inside a section, alignment and proportions may change when that makes the screen clearer.
 - Apps and dashboards keep real app proportions. The shell fills the viewport, a sidebar of 240 to 280 and fluid content, usually capped around 1440 to 1600 wide, and the page is as long as its content, with more sections below the first screen. Never shrink an app into a narrow centered column. If the original was drawn as a small window on a backdrop, keep it visibly a window, with its frame and backdrop, and still give it desktop proportions inside.
 - The strongest landing hero is a scene. One generated image fills the hero from edge to edge, its subject sits on one side, and the headline sits on the calm empty part of the same image, with the product view rising from the bottom edge. Look at the hero in the references to see it.
@@ -151,6 +155,8 @@ If the product already has a real brand, like a logo file, a color or a typeface
 - Hover and focus states exist and stay inside the palette. A visible focus ring for keyboard users.
 - The logo is the product name in the main family, plus a simple mark if there is one. No gradient wordmark and no sparkle tile.
 - The signature detail from the direction appears where it belongs and nowhere else.
+- Rewrite every flagged string. If unsure whether a string makes sense, replace it with a plain functional sentence. AI-generated cute copy is worse than boring copy.
+- Be aware of bundle size. Motion is not tiny. Three.js is large. Lazy-load anything that's not above-the-fold.
 
 ## 8. Visuals
 
@@ -167,6 +173,7 @@ If the product already has a real brand, like a logo file, a color or a typeface
 
 ## 9. Motion
 
+- Animate ONLY `transform` and `opacity`. Never animate `top`, `left`, `width`, `height`.
 - Remove motion that loops for no reason, like `animate-pulse` or `animate-ping` on things that are not live, shimmer on headings, breathing glows, floating elements and parallax.
 - Remove `transition-all`, bouncy springs, `hover:scale` on cards and anything that moves more than a few pixels on hover.
 - Keep motion that explains something. A hover is a quick color or surface change, a press is a tiny scale down, a menu fades and rises a few pixels from where it opens, a changed number tweens.
@@ -223,11 +230,13 @@ It adds a few minutes, so make it only when the user wants it.
 - [ ] No hue gradients, gradient text, glows, colored shadows or color blobs
 - [ ] No emoji left in the interface
 - [ ] One icon set at one size and stroke
-- [ ] Type chosen for the character, weights 400 to 600, no uppercase tracked labels, no italic, no negative tracking on small text
-- [ ] No exclamation marks, no trailing periods on short strings, no greeting headline, no unverified claims
+- [ ] Type chosen for the character, weights 400 to 600, no uppercase tracked labels, no italic, no negative tracking on small text, preserve browser zoom, user font settings, Dynamic Type, and platform text scaling
+- [ ] Group related content tightly and separate distinct groups generously; prevent image layout shift with correct aspect ratios, responsive sources, and useful alt text
+- [ ] No exclamation marks, no trailing periods on short strings, no greeting headline, no unverified claims; rewrite every flagged string into plain functional copy (no AI-generated cute copy)
 - [ ] Numbers in one format with tabular figures
 - [ ] Nested radii add up
+- [ ] Be aware of bundle size: lazy-load non-above-the-fold assets and heavy libraries (Three.js, motion)
 - [ ] A hero has a real visual or a product preview with at least one moment, never filler and never a labeled placeholder
 - [ ] The first screen is composed as a whole with no dead empty band
-- [ ] No looping or bouncy motion, one easing curve, no animated layout properties
+- [ ] No looping or bouncy motion, one easing curve; animate ONLY `transform` and `opacity` (never `top`, `left`, `width`, `height`)
 - [ ] Template check. If you swapped the product name for another product's, would the screen still fit? If yes, push the direction harder in the copy, the visual and the signature detail

@@ -47,6 +47,7 @@ Go through every group and note each sign you find with where it lives. Each lin
 - Hype words, like supercharge, seamless, unlock, magic, revolutionize → what the thing actually does
 - Trailing periods on labels and buttons → none
 - Fake looking data, like `$123,456` or `[X]` → plausible numbers
+- AI-generated cute copy or unsure phrasing → plain functional sentences
 
 ## Components
 
@@ -71,6 +72,7 @@ Go through every group and note each sign you find with where it lives. Each lin
 - `Trusted by 10,000+ teams`, `Loved by 10,000+`, rows of avatar dots or five stars without a source → ask if it is real, then make it quiet and specific or remove it
 - Parallax and elements floating on scroll → static layout, motion only with a purpose
 - Feature cards with an emoji, a bold title and a vague line each → fewer features, concrete copy, line icons or none
+- Missing image aspect ratios causing layout shift or missing alt text → explicit aspect ratios, responsive sources, useful alt text
 
 ## Visuals
 
@@ -87,7 +89,7 @@ Go through every group and note each sign you find with where it lives. Each lin
 - Bouncy springs and overshoot on simple UI → one ease-out curve
 - Everything flying in on load from different directions → one short fade and rise with a small stagger
 - Parallax, floating loops and elements that move on scroll → static layout
-- Animating width, height, top or left → transform and opacity
+- Animating width, height, top or left → animate ONLY transform and opacity
 
 ## Template look
 
