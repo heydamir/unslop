@@ -94,7 +94,7 @@ A display serif belongs to large headlines only, never to labels or buttons.
 | Page title | 28 to 36 | 1.15 | 400 to 500 |
 | Hero headline | 56 to 72 desktop, 36 to 44 mobile | 1.02 to 1.08 | 400 to 500 |
 
-Letter spacing is 0 for anything under 16px, slightly positive like 0.01em is fine for small muted text. Display text from 40px can go to -0.02em, and from 56px to -0.03em.
+Letter spacing is 0 for anything under 16px; slightly positive like 0.01em is fine for small muted text. Display text from 40px can go to -0.02em, and from 56px to -0.03em.
 
 ## Radius
 
