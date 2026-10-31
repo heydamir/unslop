@@ -8,14 +8,16 @@ unslop is a skill for Claude that turns vibecoded, AI-looking UI into a designed
 
 ## Install
 
-For Claude Code, copy the skill into your skills folder.
+For Claude Code, run these two lines. They work the same in bash, zsh and PowerShell, on macOS, Linux and Windows.
 
-```bash
-git clone https://github.com/heydamir/unslop
-mkdir -p ~/.claude/skills && cp -r unslop/skills/unslop ~/.claude/skills/
+```
+git clone --no-checkout https://github.com/heydamir/unslop "$HOME/.claude/skills/unslop"
+git -C "$HOME/.claude/skills/unslop" --git-dir=.git read-tree -mu HEAD:skills/unslop
 ```
 
-For a single project, copy it into `.claude/skills/` inside that project instead.
+The first line creates your skills folder if it's missing. If you already have a skill named `unslop`, git stops with "destination path already exists" and leaves it alone. The second line puts just the skill files in place. To update, delete `~/.claude/skills/unslop` and run both lines again.
+
+For a single project, run the same lines from the project root with `.claude/skills/unslop` in place of `"$HOME/.claude/skills/unslop"`, then delete the `.git` folder inside it before you commit.
 
 ## Use
 
