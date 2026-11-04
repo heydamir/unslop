@@ -46,6 +46,7 @@ In Claude Code, type `/unslop` with what you want. In Codex, type `$unslop` the 
 ```
 /unslop this dashboard
 /unslop the hero of https://example.com
+/unslop make the settings screens consistent
 /unslop my landing page and make the story video so I can post it
 ```
 
@@ -54,6 +55,7 @@ It audits the screen and proposes a direction before it edits anything, so you c
 ## What it does
 
 - **Audit.** Lists every sign of slop with where it lives.
+- **Consistency.** Compares related screens, reuses established inputs, lists and actions, and checks rendered icons and interaction states while preserving deliberate variants.
 - **Direction.** Character, world, the one or two moments that carry the color, and a signature detail, all taken from your product.
 - **Passes.** Spacing, color, icons, copy, type, layout, details, visuals and motion, in that order.
 - **Visuals.** Shows your product instead of a glossy blob. When a hero needs a scene or an object, it can generate one through an image service like fal, Replicate, OpenAI images or Higgsfield. If none is connected, it offers to connect one as an MCP server, and it shows the prompt and asks before every paid generation. Dashboards and apps rarely need one.

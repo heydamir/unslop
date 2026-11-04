@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Turns vibecoded, AI-looking UI into a designed interface with its own character. Finds a direction from the product itself, then fixes spacing, color, icons, copy, type, layout, details, visuals and motion in that order, and can generate a real hero visual with an image tool when one is available. Use when the user asks to unslop, polish, clean up or redesign a screen so it stops looking AI-generated, or when a UI shows the usual tells like purple gradients, glows, gradient text, emoji labels, "New ✨" badges, glossy blobs, uppercase tracked labels, pulsing elements or uneven spacing. Works on React, Tailwind, HTML and CSS, for dashboards, apps and landing pages.
+description: Turns vibecoded, AI-looking UI into a designed interface with its own character. Finds a direction from the product itself, then fixes spacing, color, icons, copy, type, layout, details, visuals and motion in that order, and can generate a real hero visual with an image tool when one is available. Use when the user asks to unslop, polish, clean up or redesign a screen so it stops looking AI-generated, check consistency across related screens, or when a UI shows the usual tells like purple gradients, glows, gradient text, emoji labels, "New ✨" badges, glossy blobs, uppercase tracked labels, pulsing elements or uneven spacing. Works on React, Tailwind, HTML and CSS, for dashboards, apps and landing pages.
 license: CC-BY-4.0
 metadata:
   author: Damir Sokolovsky
@@ -37,17 +37,19 @@ Which visual styles tend to work, and which fail, is in [references/visuals.md](
    - Only a screenshot? Rebuild the screen as one static HTML file first, matching it closely, and treat that as the original.
    - In both cases the result is a redesigned page in code that the user can hand to whoever owns the real site, so say that in the report.
 2. **Audit.** Go through [references/signs.md](references/signs.md) and list every sign you find, one line each with where it lives.
+   - For repeated controls, shared components or related screens, read [references/consistency.md](references/consistency.md). Compare equivalent inputs, lists, actions and states against the existing product patterns. Identify the shared component or token behind each mismatch; nearby screens provide comparison evidence, not permission to redesign unrelated pages.
 3. **Decide how much to change.** Read the audit honestly before planning anything.
    - **Heavy slop**, many signs across color, type, icons and copy. Run the full process below.
    - **Light slop**, a screen that is mostly designed with a few signs left. Polish mode. Fix only what the audit found, take the direction from the existing brand instead of inventing a new one, and keep the palette, type, layout and visual. Bigger ideas, like a moment that is missing or a scene for the hero, go into the report as suggestions, not changes.
    - **No slop.** Say so plainly and suggest two or three small refinements at most, with exact values. Apply them only if the user agrees, and stop there. Never change a good screen just to make it different.
 4. **Set the direction and stop.** Write the five lines described below. Show the audit and the direction to the user and wait for their answer before editing, since changing the direction later means redoing everything. If you have a tool for asking the user questions, ask through it, otherwise ask in plain text and stop. Skip the wait only when the user already said to just do it.
 5. **Fix in nine passes, in order.** Finish a pass across the whole screen before starting the next. When nearly every line changes, plan the passes in order and then write the new screen in one go, as long as every pass is applied. Spacing comes first because everything else reads differently once the rhythm is right. Copy comes before type and layout because the length of the headline decides its size and where it sits. Visuals and motion come last because they should fit a screen that already works without them.
-6. **Check.** Run the checklist at the end of this file, render again and compare with the audit list. Anything still on the list gets fixed.
+   - Carry the same component and token decisions through equivalent uses in scope. Prefer an existing shared primitive to another page-specific copy; preserve deliberate semantic, density and responsive variants.
+6. **Check.** Run the checklist at the end of this file, render again and compare with the audit list. Compare representative consumers of changed shared components at matching viewports and states, including a narrow layout where relevant. Anything still on the list gets fixed; state what could not be checked.
 7. **Report** the direction, a few lines per pass about what changed, and any image prompt you wrote.
 8. **Record, when asked or when the user wants something to share.** Build the story file and render the video described in [Story video](#story-video). If the user asks for it at the start, write each pass into the story file as you go.
 
-Keep a run quick. Render the screen to check it at most three times. When you generate an image, start it right after the direction is confirmed and keep doing the first passes while it runs, instead of waiting for it.
+Keep a run quick. Render each screen to check it at most three times; compare representative consumers together when shared components change. When you generate an image, start it right after the direction is confirmed and keep doing the first passes while it runs, instead of waiting for it.
 
 Exact values for every pass live in [references/tokens.md](references/tokens.md).
 
@@ -68,7 +70,7 @@ If the product already has a real brand, like a logo file, a color or a typeface
 ## 1. Spacing
 
 - Everything sits on a 4px grid. Margins, paddings, gaps and fixed heights are multiples of 4, so 28 or 104 are fine even though they are not in the token list. A 2px step is fine for nudges inside small controls, and an odd value that exactly centers something stays.
-- Same thing, same size. All rows in a list share one height and one gap, all cards in a row share one padding.
+- Equivalent controls use the same size variant. Rows in a list share padding, minimum height and alignment; wrapped content can make a row taller. All cards in a row share one padding.
 - Space shows grouping. Space inside a group is smaller than space between groups, so a list reads as one block and sections read as separate ones.
 - Things line up. Icons sit in one column, labels start on one line, numbers align right in one column. Nothing is nudged off the line with a stray translate or odd margin.
 - Padding follows density. Compact panels and sidebars around 16, cards 20 to 24, page edges 24 to 32.
@@ -94,7 +96,8 @@ If the product already has a real brand, like a logo file, a color or a typeface
 ## 3. Icons
 
 - Every emoji used as an icon or as decoration in a label becomes a line icon from one set. Use the set the project already has, otherwise lucide.
-- One size and one stroke everywhere, 16 or 18px with a 1.5 stroke.
+- One icon family. The same action uses the same glyph, rendered size and stroke in equivalent controls, usually 16 or 18px with a 1.5 stroke. Use established compact or prominent variants where the role calls for them, not a new size per page.
+- Check the result after CSS: inherited sizing, flex shrink and the surrounding button can make the same SVG render differently. Fix the shared icon or control rather than nudging each instance.
 - Icons take the color of their text role, usually secondary or muted. They never get their own colors.
 - The icon box has the same width in every row and the gap to the label is fixed, 8 or 10, so labels align.
 - Drop icons that add nothing, like an emoji in every card title or before every section label. Categories that need color get a small status dot.
@@ -138,6 +141,7 @@ If the product already has a real brand, like a logo file, a color or a typeface
 
 ## 7. Details
 
+- Equivalent inputs, lists and action groups reuse the established component or style family across pages. Match labels, help/error placement, action hierarchy and focus/loading states; preserve the distinct semantics of navigation, selection and editing.
 - Nested radius. An inner radius equals the outer radius minus the padding between them, never less than 4. Controls 8 to 10, cards 12 to 16, panels 14 to 20. Not everything is a pill.
 - Counts and meta become quiet text, often mono and muted, instead of glowing pills.
 - Keyboard shortcuts become small keycaps.
@@ -217,12 +221,14 @@ It adds a few minutes, so make it only when the user wants it.
 ## Checklist
 
 - [ ] The direction is written and every pass follows it
-- [ ] Every spacing value is on the 4px scale and equal things have equal sizes
+- [ ] Spacing follows the 4px scale; equivalent controls use established size variants and rows keep consistent insets and minimum heights
 - [ ] Icons, labels and numbers each sit in one aligned column
+- [ ] Equivalent inputs, lists and actions reuse shared patterns across the screens in scope; deliberate variants have a clear purpose
 - [ ] One tinted neutral ramp, three text roles, one accent with enough contrast
 - [ ] No hue gradients, gradient text, glows, colored shadows or color blobs
 - [ ] No emoji left in the interface
-- [ ] One icon set at one size and stroke
+- [ ] One icon family; the same action has the same glyph and rendered geometry within equivalent size variants
+- [ ] Save, cancel, back and destructive actions remain predictable; keyboard focus and loading/error states were checked on representative consumers
 - [ ] Type chosen for the character, weights 400 to 600, no uppercase tracked labels, no italic, no negative tracking on small text
 - [ ] No exclamation marks, no trailing periods on short strings, no greeting headline, no unverified claims
 - [ ] Numbers in one format with tabular figures
