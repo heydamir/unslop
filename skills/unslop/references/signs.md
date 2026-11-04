@@ -26,14 +26,14 @@ Go through every group and note each sign you find with where it lives. Each lin
 
 - Emoji as nav icons, label decoration or status, like 🏠 📥 🚀 💰 ⚠️ 📈 🔥 😬 → one line icon set or nothing
 - Emoji inside pills and counts, like `18 👤` → plain number
-- Icons in many sizes and colors → one size, one stroke, text role color
+- Equivalent action icons in arbitrary sizes or colors → one glyph and rendered size/stroke per established variant, text role color
 - Icons nudged off the column → same icon box width in every row
 - A sparkle ✨ for anything AI → remove or use a plain icon only where it explains something
 
 ## Spacing
 
 - Arbitrary values, like `mt-[13px]`, `ml-[7px]`, `h-[31px]` → steps on the 4px scale
-- Rows in one list with different heights or gaps → one height, one gap
+- Equivalent rows with inconsistent padding, minimum heights or gaps → one row rhythm; allow wrapped content to increase height
 - Groups that sit closer to their neighbours than to their own items → smaller gaps inside groups, bigger between them
 - Uneven padding inside sibling cards → one padding
 - Big empty gaps above a section and cramped space below it → balanced rhythm
@@ -59,6 +59,14 @@ Go through every group and note each sign you find with where it lives. Each lin
 - Equal cards side by side, each with the same chart or layout → one main chart, compact stats, varied widths
 - Logo as a gradient tile with a sparkle and a gradient wordmark → product name as text plus a simple flat mark
 - Logo mark as a glossy orb, a gradient ball or a glowing dot → a flat glyph in one solid color, or the wordmark alone
+
+## Cross-screen consistency
+
+- The same field or list is rebuilt differently on each page → reuse the established component and its variants; see [consistency.md](consistency.md)
+- The same action gets a different glyph because it belongs to another page or resource → use the shared action icon
+- Identical SVG names or props still look different → compare rendered dimensions, stroke, inherited CSS, alignment and flex shrink
+- Equivalent flows move Save, Cancel or Back around, or change their meaning → keep action hierarchy and navigation predictable without rewriting behavior during cosmetic work
+- Loading looks like an empty collection on one page and an error on another → reuse distinct loading, empty, error and retry patterns
 
 ## Landing pages and heroes
 
