@@ -227,6 +227,8 @@ It adds a few minutes, so make it only when the user wants it.
 - [ ] No exclamation marks, no trailing periods on short strings, no greeting headline, no unverified claims
 - [ ] Numbers in one format with tabular figures
 - [ ] Nested radii add up
+- [ ] Table row states read apart: header, value in use, selection and keyboard focus are each recognizable
+- [ ] Buttons share the control radius, no square corners against the component style
 - [ ] A hero has a real visual or a product preview with at least one moment, never filler and never a labeled placeholder
 - [ ] The first screen is composed as a whole with no dead empty band
 - [ ] No looping or bouncy motion, one easing curve, no animated layout properties
