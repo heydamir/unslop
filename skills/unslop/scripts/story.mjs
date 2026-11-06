@@ -27,11 +27,13 @@ async function browserKit() {
   process.exit(1);
 }
 
-try {
-  execFileSync("ffmpeg", ["-version"], { stdio: "ignore" });
-} catch {
-  console.error("ffmpeg is not installed. Install it to render the video, for example `brew install ffmpeg`.");
-  process.exit(1);
+if (!play) {
+  try {
+    execFileSync("ffmpeg", ["-version"], { stdio: "ignore" });
+  } catch {
+    console.error("ffmpeg is not installed. Install it to render the video, for example `brew install ffmpeg`.");
+    process.exit(1);
+  }
 }
 
 const file = resolve(input);
@@ -449,13 +451,20 @@ try {
     }
   }
 } catch (error) {
-  if (!play) throw error;
+  if (!play) {
+    rmSync(frames, { recursive: true, force: true });
+    throw error;
+  }
+  if (browser.isConnected()) console.error(error);
 } finally {
   await browser.close().catch(() => {});
   server.close();
 }
 if (play) process.exit(0);
 
-execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "f-%05d.jpg"), "-vf", `scale=${FRAME.width * 2}:${FRAME.height * 2}:flags=lanczos`, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-preset", "slow", "-movflags", "+faststart", resolve(out)]);
-rmSync(frames, { recursive: true, force: true });
+try {
+  execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-framerate", String(FPS), "-i", join(frames, "f-%05d.jpg"), "-vf", `scale=${FRAME.width * 2}:${FRAME.height * 2}:flags=lanczos`, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-preset", "slow", "-movflags", "+faststart", resolve(out)]);
+} finally {
+  rmSync(frames, { recursive: true, force: true });
+}
 console.log(`saved ${resolve(out)}, ${steps.length} steps, ${total.toFixed(1)}s`);
