@@ -46,6 +46,21 @@ if (steps.length === 0) {
   console.error('story.html needs <meta name="unslop-steps" content="Spacing, Color, Type"> listing the steps in order');
   process.exit(1);
 }
+const count = (pattern) => html.match(pattern)?.length ?? 0;
+const warn = (text) => console.warn(`warning: ${text}`);
+const swaps = count(/class="(?:[^"]*\s)?swap(?:\s[^"]*)?"/g);
+if (swaps > 8) warn(`${swaps} swaps, use swaps sparingly, only where the words change, at most eight in a story`);
+if (/border-radius\s*:[^;}"]*\b9{3,4}px/i.test(html)) warn("pills: write their radius as half the height, like 23px, not 9999px, or the corner only changes in the last frame");
+if (/\b100vh\b/i.test(html)) warn("the story page renders 1440 wide and at least 900 tall, so do not size things from 100vh");
+const slops = count(/\sdata-slop\b/g);
+if (slops > 5) warn(`${slops} data-slop marks, at most five, on the clearest examples that sit apart from each other`);
+const radii = count(/\sdata-radius\b/g);
+if (radii && (radii < 2 || radii > 4)) warn(`${radii} data-radius marks, data-radius goes on two to four buttons and cards whose corners change`);
+const stacks = new Map();
+for (const [, name] of html.matchAll(/\sdata-gap(?:\s*=\s*"([^"]*)")?/g)) stacks.set(name || "main", (stacks.get(name || "main") ?? 0) + 1);
+stacks.forEach((blocks, name) => {
+  if (blocks < 5 || blocks > 7) warn(`data-gap="${name}" has ${blocks} blocks, ${blocks - 1} gaps, aim for four to six measured gaps per stack`);
+});
 const [frameX = 0, frameY = 0, frameWidth = 960] = (meta("unslop-frame") ?? "0 0 960").split(/\s+/).map(Number);
 const kindOf = (text) => (/spac/i.test(text) ? "spacing" : /detail|radius|corner/i.test(text) ? "details" : null);
 
