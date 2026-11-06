@@ -35,6 +35,26 @@ try {
   await page.goto(url, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(600);
+  await page.evaluate(async () => {
+    const pause = (ms) => new Promise((done) => setTimeout(done, ms));
+    const root = document.scrollingElement || document.documentElement;
+    let last = root.scrollHeight;
+    for (let step = 0; step < 30 && root.scrollTop < 20_000; step++) {
+      window.scrollBy(0, window.innerHeight);
+      await pause(150);
+      const grown = root.scrollHeight;
+      if (grown <= last && root.scrollTop + window.innerHeight >= grown) break;
+      last = grown;
+    }
+    window.scrollTo(0, 0);
+    const loaded = (image) =>
+      new Promise((done) => {
+        image.addEventListener("load", done, { once: true });
+        image.addEventListener("error", done, { once: true });
+      });
+    const pending = [...document.images].filter((image) => !image.complete);
+    await Promise.race([Promise.all(pending.map(loaded)), pause(5000)]);
+  });
   const html = await page.evaluate(async ([label, scheme]) => {
     const LIMIT = 3_000_000;
     const absolute = (value, base = location.href) => {
