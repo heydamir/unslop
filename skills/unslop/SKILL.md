@@ -86,6 +86,7 @@ If the product already has a real brand, like a logo file, a color or a typeface
 - Accent with text on it reaches 4.5 to 1 contrast. If it does not, darken it or put dark text on it. Accent used as text or ink on a light surface needs the same contrast, so use a darker shade of it there.
 - On dark themes the primary button can be an off white from the ramp with dark text, and the accent can live in a smaller place like the selection or a key figure. This often looks more deliberate than a colored button.
 - Semantic colors only carry meaning, like green for a good change and red for an error, and they are toned down to sit inside the palette.
+- Compare row states on the rendered screen, not in the tokens. Where one row is selected and another is the value in use, the header, the value in use and the selection each stay recognizable at a glance: a neutral header, a check or label on the value in use, and a clearly different fill for the selection. Two near-identical pale fills fail even when every token is right.
 - Remove hue gradients on surfaces, gradient text, colored glows and colored shadows, radial color washes and blobs behind content, and neon borders.
 - Borders are quiet hairlines, the text color of the ramp at 6 to 10% opacity.
 - On dark themes depth comes from surface steps and hairlines, not from shadows. A window or object floating over an image may keep a soft neutral shadow. On light themes shadows are neutral, soft and small.
@@ -139,6 +140,7 @@ If the product already has a real brand, like a logo file, a color or a typeface
 ## 7. Details
 
 - Nested radius. An inner radius equals the outer radius minus the padding between them, never less than 4. Controls 8 to 10, cards 12 to 16, panels 14 to 20. Not everything is a pill.
+- Compare adjacent button corners against the chosen radius. Toolbar buttons often keep square corners while everything around them uses the product's control radius; check the rendered buttons, and flag the ones that clash with that style.
 - Counts and meta become quiet text, often mono and muted, instead of glowing pills.
 - Keyboard shortcuts become small keycaps.
 - Charts sit on a muted grid with muted mono labels. No rainbow bars inside one series, no glowing bars, no uppercase day labels. If the chart is placeholder noise, replace it with data that tells something real.
