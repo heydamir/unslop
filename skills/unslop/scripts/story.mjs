@@ -232,7 +232,8 @@ const runtime = `
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(el);
     });
-    const stageWidth = window.parent.innerWidth;
+    // In --play the stage is scaled down to fit the window, so take its layout width, not the window's.
+    const stageWidth = window.parent.document.body.offsetWidth;
     const several = groups.size > 1;
     const pairs = [];
     groups.forEach((list) => {
