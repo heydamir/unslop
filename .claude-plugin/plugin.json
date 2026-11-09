@@ -1,0 +1,17 @@
+{
+  "name": "unslop",
+  "version": "1.0.0",
+  "description": "Turns vibecoded, AI-looking UI into a designed interface with its own character.",
+  "author": {
+    "name": "Damir Sokolovsky"
+  },
+  "homepage": "https://heydamir.design/unslop",
+  "repository": "https://github.com/heydamir/unslop",
+  "license": "CC-BY-4.0",
+  "keywords": [
+    "ui",
+    "design",
+    "polish",
+    "skill"
+  ]
+}

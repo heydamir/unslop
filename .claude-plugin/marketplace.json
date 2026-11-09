@@ -1,0 +1,14 @@
+{
+  "name": "unslop",
+  "description": "The unslop skill as a Claude Code plugin.",
+  "owner": {
+    "name": "heydamir"
+  },
+  "plugins": [
+    {
+      "name": "unslop",
+      "source": "./",
+      "description": "Turns vibecoded, AI-looking UI into a designed interface with its own character."
+    }
+  ]
+}
