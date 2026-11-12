@@ -1,0 +1,4 @@
+interface:
+  display_name: "Travel Unslop"
+  short_description: "여행사 홈페이지를 검색, 감성, 신뢰가 조화된 설계된 화면으로 만듭니다"
+  default_prompt: "Use $travel-unslop on this travel agency screen so the search is intuitive, the destination carries the emotion and the booking is transparent."
