@@ -70,6 +70,21 @@ It audits the screen and proposes a direction before it edits anything, so you c
 
 Try it on the two vibecoded screens in [examples](examples).
 
+## travel-unslop
+
+A fork of the skill for travel agency websites, written in Korean and aimed at Korean full-service agencies that sell packages, flights, hotels and air plus hotel bundles. It keeps the nine passes and adds three things a travel site has to get right together: a search people can use without thinking, destination photography that carries the emotion, and a booking flow that shows the real price, what is included and what cancelling costs. It works on an existing screen or builds a new one, and covers the home page, search results, product detail, booking and confirmation.
+
+```bash
+cp -r unslop/skills/travel-unslop ~/.claude/skills/
+```
+
+```
+/travel-unslop 이 여행사 메인 화면
+/travel-unslop 패키지 상품 상세 페이지를 새로 만들어줘
+```
+
+Try it on [examples/travel-home.html](examples/travel-home.html). It does not include the story video, use `unslop` for that.
+
 ## Hire the unslopper
 
 Would rather have a designer do it? Damir unslops one key screen in 3 days, built in your stack, at [heydamir.design/unslop](https://heydamir.design/unslop).
