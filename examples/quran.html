@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wird AI ✨ - Read the Quran Like Never Before</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        font-family: "Cairo", sans-serif;
+        background: radial-gradient(120% 80% at 10% 0%, #3b0764 0%, #1e1b4b 45%, #0f0a1f 100%);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #f0abfc 0%, #a78bfa 50%, #60a5fa 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .glow-button {
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+        box-shadow: 0 0 28px rgba(139, 92, 246, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(167, 139, 250, 0.4);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 0 40px rgba(139, 92, 246, 0.18);
+      }
+      .ayah-pill {
+        background: linear-gradient(135deg, #a855f7, #6366f1);
+        box-shadow: 0 0 14px rgba(168, 85, 247, 0.7);
+      }
+      .blob {
+        background: radial-gradient(circle, rgba(217, 70, 239, 0.45), transparent 70%);
+        filter: blur(40px);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-white">
+    <div class="blob pointer-events-none fixed left-[-120px] top-[-80px] h-[420px] w-[420px]"></div>
+    <div class="blob pointer-events-none fixed bottom-[-140px] right-[-60px] h-[380px] w-[380px]"></div>
+
+    <div class="relative flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="glass m-3 flex w-[248px] flex-col rounded-3xl p-5">
+        <div class="mb-7 flex items-center gap-3">
+          <div class="glow-button flex h-10 w-10 items-center justify-center rounded-2xl text-xl">✨</div>
+          <div class="gradient-text text-2xl font-black">وِرد AI</div>
+          <span class="glow-button ml-auto rounded-full px-2 py-[3px] text-[10px] font-bold">PRO 🚀</span>
+        </div>
+
+        <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.3em] text-violet-300/70">NAVIGATION · القائمة</p>
+        <nav class="space-y-[6px] text-left">
+          <a class="glow-button flex items-center gap-3 rounded-2xl px-4 py-[11px] font-bold">🏠 الرئيسية</a>
+          <a class="flex items-center gap-3 rounded-2xl px-4 py-[9px] text-violet-200 hover:scale-105 transition-all">📖 السور</a>
+          <a class="flex items-center gap-3 rounded-2xl px-4 py-[13px] text-violet-200 hover:scale-105 transition-all">🎧 الاستماع</a>
+          <a class="flex items-center gap-3 rounded-2xl px-4 py-[9px] text-violet-200 hover:scale-105 transition-all">🔖 المحفوظات <span class="ayah-pill ml-auto rounded-full px-2 text-[11px]">12 🔥</span></a>
+          <a class="flex items-center gap-3 rounded-2xl px-4 py-[10px] text-violet-200 hover:scale-105 transition-all">⚙️ الإعدادات</a>
+        </nav>
+
+        <div class="glass mt-auto rounded-2xl p-4 text-left">
+          <p class="text-sm font-bold">🌙 ترقية إلى PRO!</p>
+          <p class="mt-1 text-xs text-violet-200">افتح تلاوات غير محدودة بقوة الذكاء الاصطناعي 🤖</p>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="flex-1 p-[22px] text-left">
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h1 class="gradient-text text-4xl font-black tracking-wide">أهلاً بعودتك يا أحمد! 👋</h1>
+            <p class="mt-1 text-violet-200">استمتع بتجربة قراءة ثورية مدعومة بالذكاء الاصطناعي!!</p>
+          </div>
+          <input class="glass w-72 rounded-full px-5 py-[10px] text-sm text-white placeholder-violet-300 outline-none" placeholder="🔍 ابحث عن أي شيء..." />
+        </div>
+
+        <div class="mb-6 grid grid-cols-3 gap-4">
+          <div class="glass rounded-3xl p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-violet-300">STREAK · الورد المتتالي</p>
+            <p class="gradient-text mt-2 text-4xl font-black">🔥 7 أيام!!</p>
+            <p class="mt-1 text-sm text-emerald-300">+2 🚀</p>
+          </div>
+          <div class="glass rounded-3xl p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-violet-300">PROGRESS · الختمة</p>
+            <p class="gradient-text mt-2 text-4xl font-black">٣ أجزاء 📖</p>
+            <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/10">
+              <div class="glow-button h-full w-[12%] rounded-full"></div>
+            </div>
+            <p class="mt-1 text-xs text-violet-300">12% completed!</p>
+          </div>
+          <div class="glass rounded-3xl p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-violet-300">TODAY · اليوم</p>
+            <p class="gradient-text mt-2 text-4xl font-black">⏱️ 45 دقيقة</p>
+            <p class="mt-1 text-sm text-violet-200">آخر قراءة: Al-Faatiha منذ 2 minutes ago</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+          <section class="glass col-span-2 rounded-3xl p-7">
+            <div class="mb-5 flex items-center justify-between">
+              <h2 class="gradient-text text-3xl font-black tracking-wider">✨ سُورَةُ ٱلْفَاتِحَةِ ✨</h2>
+              <button class="glow-button animate-pulse rounded-full px-5 py-2 text-sm font-bold">🎧 استمع الآن!</button>
+            </div>
+            <div class="space-y-3 text-2xl font-bold leading-none tracking-wide">
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">1</span><span class=gradient-text>بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">2</span><span>ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">3</span><span>ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">4</span><span>مَٰلِكِ يَوْمِ ٱلدِّينِ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">5</span><span>إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">6</span><span>ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">7</span><span>صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ</span></p>
+            </div>
+            <div class="mt-7 flex gap-3">
+              <button class="glass rounded-full px-5 py-2 text-sm">← السورة السابقة</button>
+              <button class="glow-button rounded-full px-6 py-2 text-sm font-bold">السورة التالية →</button>
+            </div>
+          </section>
+
+          <section class="glass rounded-3xl p-6">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-violet-300">UP NEXT · التالي 🚀</p>
+            <h3 class="gradient-text mt-2 text-2xl font-black">سُورَةُ الإِخۡلَاصِ</h3>
+            <div class="mt-4 space-y-2 text-lg leading-none tracking-wide">
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">1</span><span class=gradient-text>قُلْ هُوَ ٱللَّهُ أَحَدٌ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">2</span><span>ٱللَّهُ ٱلصَّمَدُ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">3</span><span>لَمْ يَلِدْ وَلَمْ يُولَدْ</span></p>
+              <p class="flex items-center gap-3"><span class="ayah-pill flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs">4</span><span>وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ</span></p>
+            </div>
+            <button class="glow-button mt-6 w-full rounded-full py-[11px] text-sm font-bold">ابدأ الآن →</button>
+          </section>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
