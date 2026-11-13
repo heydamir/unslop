@@ -34,7 +34,7 @@ For Google Antigravity, copy the skill into your skills folder.
 
 ```bash
 git clone https://github.com/heydamir/unslop
-mkdir -p ~/.gemini/antigravity/skills && cp -r unslop/skills/unslop ~/.gemini/antigravity/skills/
+mkdir -p ~/.gemini/config/skills && cp -r unslop/skills/unslop ~/.gemini/config/skills/
 ```
 
 For a single project, copy it into `.agents/skills/` inside that project instead.
