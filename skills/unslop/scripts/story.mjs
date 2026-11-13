@@ -2,7 +2,8 @@ import { createRequire } from "node:module";
 import { createServer } from "node:http";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { dirname, extname, join, normalize, resolve } from "node:path";
+import { dirname, extname, join, resolve } from "node:path";
+import { resolveStoryFile } from "./story-path.mjs";
 
 const usage = "usage: node story.mjs <story.html> <out.mp4> [--wide], or node story.mjs <story.html> --play to watch it live in a browser window";
 const args = process.argv.slice(2);
@@ -384,8 +385,8 @@ const server = createServer((request, response) => {
     response.writeHead(200, { "content-type": "text/html" });
     return response.end(stage);
   }
-  const target = normalize(join(root, path.replace(/^\/__story\//, "/")));
-  if (!target.startsWith(root) || !existsSync(target)) {
+  const target = resolveStoryFile(root, path);
+  if (target === null) {
     response.writeHead(404);
     return response.end();
   }
