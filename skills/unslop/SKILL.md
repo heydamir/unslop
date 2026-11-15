@@ -176,7 +176,7 @@ If the product already has a real brand, like a logo file, a color or a typeface
 
 ### Existing drag gestures
 
-When a mobile menu, drawer or sheet already supports dragging, make it feel attached to the finger. Do not add swipe-to-dismiss just for polish.
+Apply this guidance only to existing drag interactions, typically touch gestures on mobile menus, drawers and sheets. It also applies to panels dragged with a mouse or pen on desktop. Ordinary click-open menus and popovers keep the timed transitions above. Do not add swipe-to-dismiss just for polish.
 
 - Keep pointer movement out of framework render state. In React, use refs or the project's animation values instead of `setState` on every move. Update only `transform` and the backdrop's `opacity`, with no layout reads mixed into frame updates.
 - On release, settle from the current position with the finger's recent velocity. Measure a short window near release, including any pause, rather than averaging the whole drag. A slow drag may dismiss once it crosses the distance threshold; a quick flick may dismiss sooner. Use the component's existing thresholds when they work.
