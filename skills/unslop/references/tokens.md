@@ -120,7 +120,7 @@ lucide, 16 or 18px, stroke 1.5, color of the muted or secondary text role, 8 to 
 
 ## Motion
 
-One easing curve for everything, `cubic-bezier(0.22, 1, 0.36, 1)`.
+One easing curve for timed transitions, `cubic-bezier(0.22, 1, 0.36, 1)`. Existing drag gestures follow the finger directly and settle from the release velocity with a restrained spring; the durations below do not set their pace. See [Existing drag gestures](../SKILL.md#existing-drag-gestures).
 
 | Use | Duration |
 | --- | --- |
