@@ -185,8 +185,6 @@ When a mobile menu, drawer or sheet already supports dragging, make it feel atta
 - Preserve scrolling inside the panel, the close button, Escape and focus restoration. With `prefers-reduced-motion`, remove the travel and spring, but still complete the state change and cleanup.
 - Check a slow drag, a fast flick, a drag then pause, a reversal before release, pointer cancellation and closing without a gesture. The panel must neither jump on release nor disappear before its exit completes.
 
-Inspired by [Pontus Abrahamsson's mobile menu breakdown](https://x.com/pontusab/status/2121552651422978254).
-
 ## Story video
 
 A short video where the screen unslops itself step by step, with red redlines on the slop. Look at [refs/story-dashboard-frames.webp](references/refs/story-dashboard-frames.webp) before you build it, eight frames from it in order. That video went viral, and this is how it works:
