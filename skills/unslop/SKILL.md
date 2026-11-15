@@ -176,14 +176,12 @@ If the product already has a real brand, like a logo file, a color or a typeface
 
 ### Existing drag gestures
 
-Apply this guidance only to existing drag interactions, typically touch gestures on mobile menus, drawers and sheets. It also applies to panels dragged with a mouse or pen on desktop. Ordinary click-open menus and popovers keep the timed transitions above. Do not add swipe-to-dismiss just for polish.
+For existing drag interactions, usually mobile menus, drawers and sheets, but also mouse or pen dragging on desktop. Click-open menus keep the timed transitions above. Do not add gestures just for polish.
 
-- Keep pointer movement out of framework render state. In React, use refs or the project's animation values instead of `setState` on every move. Update only `transform` and the backdrop's `opacity`, with no layout reads mixed into frame updates.
-- On release, settle from the current position with the finger's recent velocity. Measure a short window near release, including any pause, rather than averaging the whole drag. A slow drag may dismiss once it crosses the distance threshold; a quick flick may dismiss sooner. Use the component's existing thresholds when they work.
-- A pause must shed stale momentum, and a reversal must change its direction. A gesture that no longer meets the dismissal conditions returns to the open position with a restrained spring, without decorative bounce. Handle pointer cancellation by settling back too.
-- Keep the panel mounted through its exit, then commit the closed state and remove it after the animation completes. Avoid a render that resets its position before the exit starts. Use the animation's completion callback rather than a guessed timeout, and clean up interrupted animations.
-- Preserve scrolling inside the panel, the close button, Escape and focus restoration. With `prefers-reduced-motion`, remove the travel and spring, but still complete the state change and cleanup.
-- Check a slow drag, a fast flick, a drag then pause, a reversal before release, pointer cancellation and closing without a gesture. The panel must neither jump on release nor disappear before its exit completes.
+- Follow the pointer directly with `transform` and backdrop `opacity`, without a framework render on every move.
+- Settle from the current position and recent release velocity. Pauses shed momentum; reversals change its direction. Spring back without decorative bounce when cancelled or when dismissal conditions are not met.
+- Keep the panel mounted until its exit finishes, then remove it. Handle interrupted animations without jumping or leaving stale state.
+- Preserve scrolling, the close button, Escape and focus restoration. Respect reduced motion by skipping travel and springs while still completing dismissal and cleanup.
 
 ## Story video
 
