@@ -168,11 +168,24 @@ If the product already has a real brand, like a logo file, a color or a typeface
 ## 9. Motion
 
 - Remove motion that loops for no reason, like `animate-pulse` or `animate-ping` on things that are not live, shimmer on headings, breathing glows, floating elements and parallax.
-- Remove `transition-all`, bouncy springs, `hover:scale` on cards and anything that moves more than a few pixels on hover.
+- Remove `transition-all`, decorative bouncy springs, `hover:scale` on cards and anything that moves more than a few pixels on hover.
 - Keep motion that explains something. A hover is a quick color or surface change, a press is a tiny scale down, a menu fades and rises a few pixels from where it opens, a changed number tweens.
 - Transition color, background, border, opacity and transform, and name them, like `transition-colors` or `transition-[transform,opacity]` in Tailwind, instead of a catch all. Never animate width, height, top, left, margins or large blurs, they stutter on weak devices.
-- One easing curve and a few durations across the screen, from the tokens. Short for feedback, a little longer for things that enter.
+- One easing curve and a few durations for timed transitions across the screen, from the tokens. Short for feedback, a little longer for things that enter. A gesture follows the finger while dragging and uses its release velocity when settling, instead of restarting a fixed easing curve.
 - At most one entrance on load, a short fade and rise for the main content with a small stagger. Not every card flying in from a different side.
+
+### Existing drag gestures
+
+When a mobile menu, drawer or sheet already supports dragging, make it feel attached to the finger. Do not add swipe-to-dismiss just for polish.
+
+- Keep pointer movement out of framework render state. In React, use refs or the project's animation values instead of `setState` on every move. Update only `transform` and the backdrop's `opacity`, with no layout reads mixed into frame updates.
+- On release, settle from the current position with the finger's recent velocity. Measure a short window near release, including any pause, rather than averaging the whole drag. A slow drag may dismiss once it crosses the distance threshold; a quick flick may dismiss sooner. Use the component's existing thresholds when they work.
+- A pause must shed stale momentum, and a reversal must change its direction. A gesture that no longer meets the dismissal conditions returns to the open position with a restrained spring, without decorative bounce. Handle pointer cancellation by settling back too.
+- Keep the panel mounted through its exit, then commit the closed state and remove it after the animation completes. Avoid a render that resets its position before the exit starts. Use the animation's completion callback rather than a guessed timeout, and clean up interrupted animations.
+- Preserve scrolling inside the panel, the close button, Escape and focus restoration. With `prefers-reduced-motion`, remove the travel and spring, but still complete the state change and cleanup.
+- Check a slow drag, a fast flick, a drag then pause, a reversal before release, pointer cancellation and closing without a gesture. The panel must neither jump on release nor disappear before its exit completes.
+
+Inspired by [Pontus Abrahamsson's mobile menu breakdown](https://x.com/pontusab/status/2121552651422978254).
 
 ## Story video
 
@@ -232,5 +245,5 @@ It adds a few minutes, so make it only when the user wants it.
 - [ ] Buttons share the control radius, no square corners against the component style
 - [ ] A hero has a real visual or a product preview with at least one moment, never filler and never a labeled placeholder
 - [ ] The first screen is composed as a whole with no dead empty band
-- [ ] No looping or bouncy motion, one easing curve, no animated layout properties
+- [ ] No decorative looping or bouncy motion, one easing curve for timed transitions, no animated layout properties; existing drag gestures follow the finger, settle from recent velocity and finish their exit before removal
 - [ ] Template check. If you swapped the product name for another product's, would the screen still fit? If yes, push the direction harder in the copy, the visual and the signature detail

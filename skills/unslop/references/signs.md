@@ -84,10 +84,11 @@ Go through every group and note each sign you find with where it lives. Each lin
 
 - `animate-pulse`, `animate-ping` or breathing glows on things that are not live → static
 - `transition-all` and `hover:scale` on cards and buttons → color or surface step on hover, a tiny scale down on press
-- Bouncy springs and overshoot on simple UI → one ease-out curve
+- Decorative bouncy springs and overshoot on simple UI → one ease-out curve; existing drag gestures may use a restrained spring to settle
 - Everything flying in on load from different directions → one short fade and rise with a small stagger
 - Parallax, floating loops and elements that move on scroll → static layout
 - Animating width, height, top or left → transform and opacity
+- A draggable menu lags behind the finger, jumps on release or dismisses after a pause or reversal using stale momentum → direct transform updates and recent release velocity, as in [Existing drag gestures](../SKILL.md#existing-drag-gestures)
 
 ## Right to left
 
