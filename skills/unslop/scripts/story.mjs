@@ -178,7 +178,8 @@ const runtime = `
             const word = document.createElement("span");
             word.style.display = "inline-block";
             word.style.whiteSpace = "nowrap";
-            [...part].forEach((char) => {
+            // Arabic and other joining scripts break apart when split per letter, so animate them per word
+            (/[\\u0600-\\u06FF\\u0750-\\u077F\\uFB50-\\uFDFF\\uFE70-\\uFEFF]/.test(part) ? [part] : [...part]).forEach((char) => {
               const span = document.createElement("span");
               span.className = "ch";
               span.style.setProperty("--ci", index++);
