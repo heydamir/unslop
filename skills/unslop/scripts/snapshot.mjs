@@ -1,7 +1,8 @@
 import { createRequire } from "node:module";
-import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { createServer } from "node:http";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { basename, dirname, extname, join, resolve } from "node:path";
+import { resolveStoryFile } from "./story-path.mjs";
 
 const usage = "usage: node snapshot.mjs <url or local file> <out.html> [pass label] [--dark | --light] [--width 1440] [--height 810]";
 const args = process.argv.slice(2);
@@ -38,8 +39,33 @@ if (!url || !out) {
   process.exit(1);
 }
 // A path on disk is a page too: a bare file path is not a URL, and
-// Playwright rejects it with a protocol error, so turn it into one.
-const target = statSync(url, { throwIfNoEntry: false })?.isFile() ? pathToFileURL(resolve(url)).href : url;
+// Playwright rejects it with a protocol error, so a local page is served
+// over loopback instead (see below) and only real URLs are used as is.
+const local = statSync(url, { throwIfNoEntry: false })?.isFile() ? resolve(url) : null;
+
+// Chromium gives a file:// page an opaque origin, so reading its
+// stylesheets fails twice: fetch() is blocked and cssRules throws a
+// SecurityError. The old code swallowed both and still removed the
+// <link>, so the snapshot lost every external stylesheet and the page
+// came out unstyled. Serve the file's folder over loopback instead, the
+// way story.mjs already does, so the sheets are same origin and readable.
+const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".avif": "image/avif", ".svg": "image/svg+xml", ".gif": "image/gif", ".ico": "image/x-icon", ".woff2": "font/woff2", ".woff": "font/woff", ".ttf": "font/ttf", ".otf": "font/otf", ".mp4": "video/mp4", ".webm": "video/webm", ".json": "application/json" };
+let server;
+if (local) {
+  const root = dirname(local);
+  server = createServer((request, response) => {
+    const path = decodeURIComponent(new URL(request.url, "http://local").pathname);
+    const file = resolveStoryFile(root, path);
+    if (file === null) {
+      response.writeHead(404);
+      return response.end();
+    }
+    response.writeHead(200, { "content-type": types[extname(file).toLowerCase()] ?? "application/octet-stream" });
+    response.end(readFileSync(file));
+  });
+  await new Promise((done) => server.listen(0, "127.0.0.1", done));
+}
+const target = local ? `http://127.0.0.1:${server.address().port}/${encodeURIComponent(basename(local))}` : url;
 
 async function browserKit() {
   for (const name of ["playwright", "playwright-core"]) {
@@ -123,8 +149,28 @@ try {
       }
       return result;
     };
+    // An @import left as a relative path breaks as soon as the snapshot is
+    // read from another folder, so pull the imported sheet in by its text.
+    const imports = async (css, base, depth = 0) => {
+      const found = [...css.matchAll(/@import\s+(?:url\(\s*)?(['"]?)([^'")\s]+)\1\s*\)?\s*([^;]*);/g)];
+      let result = css;
+      for (const [whole, , href, tail] of found) {
+        if (depth > 5) continue;
+        const target = absolute(href.trim(), base);
+        const text = await fetch(target).then((response) => (response.ok ? response.text() : "")).catch(() => "");
+        if (!text) continue;
+        const inner = await imports(await urls(text, target), target, depth + 1);
+        const media = tail.replace(/\b(media|layer|supports)\b/g, "").replace(/\s+/g, " ").trim();
+        const body = media ? `@media ${media} {\n${inner}\n}` : inner;
+        result = result.split(whole).join(body);
+      }
+      return result;
+    };
 
     const css = [];
+    // Sheets whose text could not be read. Their <link> stays in the copy,
+    // so a page never silently loses its styles; the run warns instead.
+    const unreadable = [];
     for (const sheet of document.styleSheets) {
       const owner = sheet.ownerNode;
       let text = "";
@@ -140,9 +186,15 @@ try {
           text = [...sheet.cssRules].map((rule) => rule.cssText).join("\n");
         } catch {}
       }
+      if (!text && sheet.href) {
+        unreadable.push(sheet.href);
+        // Mark the node so the clone keeps its <link> instead of dropping it.
+        if (owner && owner.setAttribute) owner.setAttribute("data-unslop-keep", "");
+        continue;
+      }
       const media = sheet.media && sheet.media.mediaText;
-      css.push(media && media !== "all" ? `@media ${media} {\n${text}\n}` : text);
-      css[css.length - 1] = await urls(css[css.length - 1], base);
+      const resolved = await imports(await urls(text, base), base);
+      css.push(media && media !== "all" ? `@media ${media} {\n${resolved}\n}` : resolved);
     }
 
     const copy = document.documentElement.cloneNode(true);
@@ -152,7 +204,11 @@ try {
       const selected = images[index].currentSrc;
       if (selected) node.setAttribute("src", selected);
     });
-    copy.querySelectorAll("script, noscript, link[rel='stylesheet'], link[rel='preload'], link[rel='modulepreload'], style").forEach((node) => node.remove());
+    copy.querySelectorAll("script, noscript, link[rel='preload'], link[rel='modulepreload'], style").forEach((node) => node.remove());
+    copy.querySelectorAll("link[rel='stylesheet']").forEach((node) => {
+      if (!node.hasAttribute("data-unslop-keep")) node.remove();
+      else node.removeAttribute("data-unslop-keep");
+    });
     copy.querySelectorAll("[srcset]").forEach((node) => node.removeAttribute("srcset"));
     copy.querySelectorAll("source").forEach((node) => node.remove());
     copy.querySelectorAll("[loading]").forEach((node) => node.removeAttribute("loading"));
@@ -185,13 +241,17 @@ try {
       meta.content = label;
       copy.querySelector("head").prepend(meta);
     }
-    return "<!doctype html>\n" + copy.outerHTML;
+    return { html: "<!doctype html>\n" + copy.outerHTML, unreadable };
   }, [label ?? "", scheme]);
   mkdirSync(dirname(resolve(out)), { recursive: true });
-  writeFileSync(resolve(out), html);
+  writeFileSync(resolve(out), html.html);
+  for (const href of html.unreadable) {
+    console.warn(`warning: could not read the stylesheet at ${href}, so its <link> was kept as is; the copy may look different from the live page`);
+  }
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: resolve(out).replace(/\.html?$/, "") + ".live.png" });
   console.log(`saved ${resolve(out)}${label ? ` as ${label}` : ""}`);
 } finally {
   await browser.close();
+  if (server) server.close();
 }

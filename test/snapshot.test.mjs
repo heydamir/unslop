@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -108,4 +108,81 @@ test("--height 600 in space form sets the viewport height", (t) => {
   if (skipIfNoBrowser(t, result)) return;
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(pngSize(join(dir, "out.live.png")), { width: 1440, height: 600 });
+});
+
+// A file:// page has an opaque origin, so its stylesheets cannot be read
+// from the page: fetch is blocked and cssRules throws. The snapshot serves
+// the folder over loopback instead. These fixtures use an external sheet
+// on purpose, because the inline <style> fixture above never hit that path.
+const linked = () => {
+  const dir = mkdtempSync(join(tmpdir(), "unslop-linked-"));
+  writeFileSync(join(dir, "styles.css"), "body{background:#0b0b0c;margin:0}h1{color:#f5f5f5}");
+  writeFileSync(join(dir, "page.html"), `<!doctype html><html><head><link rel="stylesheet" href="styles.css"></head><body><h1>Hello</h1></body></html>`);
+  return { dir, file: join(dir, "page.html") };
+};
+
+test("a local page keeps its external stylesheet instead of losing it", (t) => {
+  const { dir, file } = linked();
+  const out = join(dir, "out.html");
+  const result = run([file, out]);
+  if (skipIfNoBrowser(t, result)) return;
+  assert.equal(result.status, 0, result.stderr);
+  const html = readFileSync(out, "utf8");
+  assert.match(html, /background:#0b0b0c/, "the external stylesheet was dropped from the snapshot");
+  assert.doesNotMatch(html, /<style><\/style>/, "the snapshot still writes an empty style block");
+  assert.doesNotMatch(html, /link rel="stylesheet"/, "the inlined sheet was not removed");
+});
+
+test("a local page resolves a stylesheet in a subfolder", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "unslop-nested-"));
+  mkdirSync(join(dir, "css"));
+  writeFileSync(join(dir, "css", "a.css"), "h1{color:#123456}");
+  writeFileSync(join(dir, "page.html"), `<!doctype html><html><head><link rel="stylesheet" href="css/a.css"></head><body><h1>Hello</h1></body></html>`);
+  const out = join(dir, "out.html");
+  const result = run([join(dir, "page.html"), out]);
+  if (skipIfNoBrowser(t, result)) return;
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(readFileSync(out, "utf8"), /color:#123456/);
+});
+
+test("a stylesheet pulled in with @import is inlined too", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "unslop-import-"));
+  writeFileSync(join(dir, "base.css"), "h1{letter-spacing:.02em}");
+  writeFileSync(join(dir, "main.css"), `@import "base.css";body{margin:0}`);
+  writeFileSync(join(dir, "page.html"), `<!doctype html><html><head><link rel="stylesheet" href="main.css"></head><body><h1>Hello</h1></body></html>`);
+  const out = join(dir, "out.html");
+  const result = run([join(dir, "page.html"), out]);
+  if (skipIfNoBrowser(t, result)) return;
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(readFileSync(out, "utf8"), /letter-spacing/, "@import was not resolved");
+});
+
+test("a media query on a stylesheet survives the snapshot", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "unslop-media-"));
+  writeFileSync(join(dir, "print.css"), "h1{color:#abcdef}");
+  writeFileSync(join(dir, "page.html"), `<!doctype html><html><head><link rel="stylesheet" href="print.css" media="screen"></head><body><h1>Hello</h1></body></html>`);
+  const out = join(dir, "out.html");
+  const result = run([join(dir, "page.html"), out]);
+  if (skipIfNoBrowser(t, result)) return;
+  assert.equal(result.status, 0, result.stderr);
+  const html = readFileSync(out, "utf8");
+  assert.match(html, /@media screen/, "the sheet's media attribute was lost");
+  assert.match(html, /color:#abcdef/);
+});
+
+// The loopback server serves the page's own folder, so it must not become a
+// way to read anything above it. resolveStoryFile guards this; the test keeps
+// the guard wired to the server.
+test("the local server refuses to read a file above the page's folder", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "unslop-traversal-"));
+  const inside = join(dir, "site");
+  mkdirSync(inside);
+  writeFileSync(join(dir, "secret.css"), "body{background:#secret}");
+  writeFileSync(join(inside, "page.html"), `<!doctype html><html><head><link rel="stylesheet" href="../secret.css"></head><body>x</body></html>`);
+  const out = join(dir, "out.html");
+  const result = run([join(inside, "page.html"), out]);
+  if (skipIfNoBrowser(t, result)) return;
+  assert.equal(result.status, 0, result.stderr);
+  assert.doesNotMatch(readFileSync(out, "utf8"), /#secret/, "a file above the page's folder was served");
+  assert.match(result.stderr, /could not read the stylesheet/, "the refusal was silent");
 });

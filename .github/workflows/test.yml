@@ -1,0 +1,33 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      # snapshot.mjs and story.mjs both drive a real browser, so the suite
+      # exercises them for real instead of skipping every browser test.
+      - run: npx playwright install --with-deps chromium
+
+      # story.mjs renders the video through ffmpeg, and its meta checks run
+      # before the ffmpeg check, so the suite needs both present.
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - run: npm test

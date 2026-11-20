@@ -87,3 +87,38 @@ test("a valid unslop-frame is accepted", () => {
 test("no unslop-frame tag falls back to the default frame", () => {
   assert.ok(pastMeta(run(goodMeta())), "missing frame tag was rejected");
 });
+
+// --check validates the story and stops, so it works without ffmpeg and
+// without a browser. That is what makes it usable in CI and in a quick loop.
+const check = (meta, html) => {
+  const dir = mkdtempSync(join(tmpdir(), "unslop-check-"));
+  const file = join(dir, "story.html");
+  writeFileSync(file, html ?? story(meta));
+  return spawnSync(process.execPath, [script, file, "--check"], { encoding: "utf8", timeout: 20_000 });
+};
+
+test("--check reports the story without rendering it", () => {
+  const result = check(`${goodMeta()}<meta name="unslop-frame" content="0 0 960">`);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /2 steps: Spacing, Color/);
+  assert.match(result.stdout, /frame: 0 0 960/);
+  assert.doesNotMatch(result.stderr, /ffmpeg is not installed/, "--check should not need ffmpeg");
+});
+
+test("--check counts the marks a story carries", () => {
+  const html =
+    `<html><head>${goodMeta()}</head><body>` +
+    `<div data-slop="Glow"></div><div data-slop="Emoji"></div>` +
+    `<button data-radius></button><button data-radius></button>` +
+    `<div data-gap="main"></div>`.repeat(1) +
+    `</body></html>`;
+  const result = check("", html);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /2 data-slop, 2 data-radius/);
+});
+
+test("--check still fails on a story with no steps", () => {
+  const result = check("");
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, STEPS_ERROR);
+});
