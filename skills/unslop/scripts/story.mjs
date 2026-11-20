@@ -5,12 +5,13 @@ import { execFileSync } from "node:child_process";
 import { dirname, extname, join, resolve } from "node:path";
 import { resolveStoryFile } from "./story-path.mjs";
 
-const usage = "usage: node story.mjs <story.html> <out.mp4> [--wide], or node story.mjs <story.html> --play to watch it live in a browser window";
+const usage = "usage: node story.mjs <story.html> <out.mp4> [--wide], node story.mjs <story.html> --play to watch it live, or node story.mjs <story.html> --check to validate it without rendering";
 const args = process.argv.slice(2);
 const [input, out] = args.filter((arg) => !arg.startsWith("--"));
 const wide = args.includes("--wide");
 const play = args.includes("--play");
-if (!input || (!out && !play)) {
+const check = args.includes("--check");
+if (!input || (!out && !play && !check)) {
   console.error(usage);
   process.exit(1);
 }
@@ -26,15 +27,6 @@ async function browserKit() {
   }
   console.error("Playwright is not installed. In your project, run `npm install -D playwright` followed by `npx playwright install chromium`.");
   process.exit(1);
-}
-
-if (!play) {
-  try {
-    execFileSync("ffmpeg", ["-version"], { stdio: "ignore" });
-  } catch {
-    console.error("ffmpeg is not installed. Install it to render the video, for example `brew install ffmpeg`.");
-    process.exit(1);
-  }
 }
 
 const file = resolve(input);
@@ -68,6 +60,17 @@ if (frame.length !== 3 || frame.some((value) => !Number.isFinite(Number(value)))
   console.error(`unslop-frame must be three numbers, like "0 0 960", with a width above 0 — got "${frameRaw}"`);
   process.exit(1);
 }
+// Checked after the story's own meta, so a broken story.html reports the
+// broken story rather than a missing ffmpeg on a machine that has no
+// ffmpeg yet. It still runs before any rendering starts.
+if (!play && !check) {
+  try {
+    execFileSync("ffmpeg", ["-version"], { stdio: "ignore" });
+  } catch {
+    console.error("ffmpeg is not installed. Install it to render the video, for example `brew install ffmpeg`.");
+    process.exit(1);
+  }
+}
 const count = (pattern) => html.match(pattern)?.length ?? 0;
 const warn = (text) => console.warn(`warning: ${text}`);
 const swaps = count(/class="(?:[^"]*\s)?swap(?:\s[^"]*)?"/g);
@@ -84,6 +87,16 @@ stacks.forEach((blocks, name) => {
   if (blocks < 5 || blocks > 7) warn(`data-gap="${name}" has ${blocks} blocks, ${blocks - 1} gaps, aim for four to six measured gaps per stack`);
 });
 const kindOf = (text) => (/spac/i.test(text) ? "spacing" : /detail|radius|corner/i.test(text) ? "details" : null);
+
+if (check) {
+  const found = [
+    `${steps.length} steps: ${steps.join(", ")}`,
+    `frame: ${frame.join(" ")}`,
+    `${slops} data-slop, ${radii} data-radius, ${swaps} swaps, ${stacks.size} data-gap stack${stacks.size === 1 ? "" : "s"}`,
+  ];
+  console.log(found.join("\n"));
+  process.exit(0);
+}
 
 const FRAME = wide ? { width: 1920, height: 1080 } : { width: 1080, height: 1080 };
 const PAGE_WIDTH = 1440;

@@ -9,3 +9,4 @@ examples/*
 !examples/assets/
 examples/assets/*
 !examples/assets/blob.webp
+node_modules/

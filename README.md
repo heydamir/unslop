@@ -84,8 +84,21 @@ It audits the screen and proposes a direction before it edits anything, so you c
 - **Passes.** Spacing, color, icons, copy, type, layout, details, visuals and motion, in that order.
 - **Visuals.** Shows your product instead of a glossy blob. When a hero needs a scene or an object, it can generate one through an image service like fal, Replicate, OpenAI images or Higgsfield. If none is connected, it offers to connect one as an MCP server, and it shows the prompt and asks before every paid generation. Dashboards and apps rarely need one.
 - **Story video.** A square video under 10 seconds of your screen unslopping itself, ready to post. It needs Playwright and ffmpeg.
+- **Right to left.** Arabic, Hebrew, Persian and Urdu screens get direction, logical properties, digit systems and icon mirroring fixed before the usual passes, since most RTL slop is a left to right screen with the words swapped.
 
-Try it on the two vibecoded screens in [examples](examples).
+Try it on the three vibecoded screens in [examples](examples): a purple gradient dashboard, a landing hero with emoji labels, and an Arabic store dashboard where the layout runs the wrong way and the digits are mixed.
+
+## Develop
+
+The scripts and tests are plain Node, with no build step.
+
+```bash
+npm install
+npx playwright install chromium
+npm test
+```
+
+The suite drives a real browser through `snapshot.mjs` and `story.mjs`, and renders the three examples, so it catches a snapshot that loses its styles. Tests that need a browser skip themselves when Chromium is missing, which is why CI installs it.
 
 ## Hire the unslopper
 
