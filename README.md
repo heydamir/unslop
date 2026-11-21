@@ -65,6 +65,15 @@ npx playwright install chromium
 
 Story videos also require ffmpeg installed and available on your PATH.
 
+## Install as an agent plugin
+
+```bash
+codex plugin marketplace add heydamir/unslop
+codex plugin add unslop@unslop
+```
+
+`.agents/plugins/marketplace.json` is the agent-agnostic marketplace entry.
+
 ## Use
 
 In Claude Code, type `/unslop` with what you want, or `/unslop:unslop` if another skill already has that name. In Codex, type `$unslop` the same way. Or just ask in your own words and the agent picks the skill up by itself.
