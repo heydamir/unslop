@@ -1,7 +1,7 @@
 import { createRequire } from "node:module";
-import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const usage = "usage: node snapshot.mjs <url or local file> <out.html> [pass label] [--dark | --light] [--width 1440] [--height 810]";
 const args = process.argv.slice(2);
@@ -82,7 +82,22 @@ try {
     const pending = [...document.images].filter((image) => !image.complete);
     await Promise.race([Promise.all(pending.map(loaded)), pause(5000)]);
   });
-  const html = await page.evaluate(async ([label, scheme]) => {
+  // A file:// stylesheet can't be read from inside the page: Chromium
+  // blocks fetch() of file:// URLs, and reading sheet.cssRules throws a
+  // SecurityError for the opaque origin — so the snapshot pass below would
+  // end up with empty text and drop the <link> anyway. Read file:// sheets
+  // from disk here in Node and hand their text to the snapshot pass.
+  const fileStyles = {};
+  try {
+    const hrefs = await page.evaluate(() => [...document.styleSheets].map((sheet) => sheet.href).filter(Boolean));
+    for (const href of hrefs) {
+      if (!href.startsWith("file://")) continue;
+      try {
+        fileStyles[href] = readFileSync(fileURLToPath(href), "utf8");
+      } catch {}
+    }
+  } catch {}
+  const html = await page.evaluate(async ([label, scheme, fileStyles]) => {
     const LIMIT = 3_000_000;
     const absolute = (value, base = location.href) => {
       try {
@@ -125,6 +140,7 @@ try {
     };
 
     const css = [];
+    const unreadable = new Set();
     for (const sheet of document.styleSheets) {
       const owner = sheet.ownerNode;
       let text = "";
@@ -140,6 +156,13 @@ try {
           text = [...sheet.cssRules].map((rule) => rule.cssText).join("\n");
         } catch {}
       }
+      if (!text && sheet.href && fileStyles[sheet.href]) {
+        text = fileStyles[sheet.href];
+      }
+      // Nothing could be read for this sheet (e.g. a cross-origin sheet
+      // whose fetch is CORS-blocked and whose rules are unreadable): keep
+      // its <link> in the snapshot instead of silently dropping the styles.
+      if (!text && sheet.href) unreadable.add(sheet.href);
       const media = sheet.media && sheet.media.mediaText;
       css.push(media && media !== "all" ? `@media ${media} {\n${text}\n}` : text);
       css[css.length - 1] = await urls(css[css.length - 1], base);
@@ -152,7 +175,14 @@ try {
       const selected = images[index].currentSrc;
       if (selected) node.setAttribute("src", selected);
     });
-    copy.querySelectorAll("script, noscript, link[rel='stylesheet'], link[rel='preload'], link[rel='modulepreload'], style").forEach((node) => node.remove());
+    copy.querySelectorAll("script, noscript, link[rel='preload'], link[rel='modulepreload'], style").forEach((node) => node.remove());
+    // Drop inlined stylesheet links, but keep any sheet we couldn't read so
+    // the snapshot still references its styles instead of losing them.
+    copy.querySelectorAll("link[rel='stylesheet']").forEach((node) => {
+      const href = absolute(node.getAttribute("href"));
+      if (unreadable.has(href)) node.setAttribute("href", href);
+      else node.remove();
+    });
     copy.querySelectorAll("[srcset]").forEach((node) => node.removeAttribute("srcset"));
     copy.querySelectorAll("source").forEach((node) => node.remove());
     copy.querySelectorAll("[loading]").forEach((node) => node.removeAttribute("loading"));
@@ -186,7 +216,7 @@ try {
       copy.querySelector("head").prepend(meta);
     }
     return "<!doctype html>\n" + copy.outerHTML;
-  }, [label ?? "", scheme]);
+  }, [label ?? "", scheme, fileStyles]);
   mkdirSync(dirname(resolve(out)), { recursive: true });
   writeFileSync(resolve(out), html);
   await page.evaluate(() => window.scrollTo(0, 0));
