@@ -43,7 +43,7 @@ Most RTL slop is not decoration. It is a left to right screen with the words swa
 | Persian first | Vazirmatn | Vazirmatn | |
 | Literary, traditional, religious | Noto Sans Arabic or IBM Plex Sans Arabic for the interface | the matching Latin | Noto Naskh Arabic or Amiri for headlines and reading text |
 
-- Hebrew screens use Noto Sans Hebrew, Heebo or Rubik with the same rules, and Urdu reading text uses Noto Nastaliq Urdu.
+- Hebrew has its own rules for type, punctuation and copy, in [Hebrew](#hebrew) below. Urdu reading text uses Noto Nastaliq Urdu.
 - Cairo and Tajawal on every element, at every weight, are the Arabic equivalent of Inter that nobody chose. Keep them when they are part of a real brand, otherwise pick for the character.
 - Letter spacing on Arabic is always 0. Any tracking, positive or negative, pulls the joined letters apart and breaks the word. This includes large display text.
 - Arabic has no capitals, so there is no uppercase or sentence case to fix. Labels get hierarchy from size, weight and color only.
@@ -60,10 +60,49 @@ Most RTL slop is not decoration. It is a left to right screen with the words swa
 - Copy that reads translated, with English word order, `ال` stuck onto English words, or a different register in every label, gets rewritten in one register. Modern Standard Arabic for most products, a dialect only when the brand really speaks it.
 - Short labels: `بحث`, not `ابحث عن أي شيء...`.
 
+## Hebrew
+
+The direction, icon, mixed text and number rules above hold for Hebrew. Type, punctuation and copy work differently, so they follow here.
+
+### Type
+
+| Character | Hebrew interface family | Latin partner | Optional display |
+| --- | --- | --- | --- |
+| Precise, technical, calm, or neutral and everyday | Noto Sans Hebrew | Noto Sans | Noto Sans Mono for figures |
+| Warm, friendly, modern | Rubik | Rubik | |
+| Literary, editorial, traditional | Noto Sans Hebrew for the interface | the matching Latin | Frank Ruhl Libre for headlines and reading text |
+
+- Heebo and Open Sans on every element are the Hebrew equivalent of Inter that nobody chose. Keep them when they are part of a real brand, otherwise pick for the character.
+- Hebrew letters do not join, so tracking does not break words the way it does in Arabic. Still keep letter spacing at 0 on interface text. Hebrew has no capitals, so there are no uppercase tracked labels to fix, and tracking adds nothing.
+- Hebrew has no italic. A browser fakes it by slanting the glyphs, which reads as broken. Use weight or color.
+- Final letters like ק, ך, ן, ף and ץ drop below the baseline. The tight 1.02 to 1.08 line height for Latin heroes lets them touch the line below, so Hebrew headlines need 1.15 to 1.25.
+- Body text without vowel points runs at 1.5 to 1.6. Text with nikud, like children's, learning or liturgical content, needs 1.7 to 1.9, because the points sit above and below the letters.
+
+### Punctuation
+
+- Abbreviations and acronyms use the geresh `׳` (U+05F3) and gershayim `״` (U+05F4), like `צה״ל`, `ע״י` or `ג׳`. Straight `'` and `"` are acceptable in body text if used consistently, but never let a smart quote replacement turn them into `’` or `”`, which read as stray quotes.
+- A one letter prefix before a Latin word or a number attaches with a hyphen, like `ב-2026` or `ה-API`. Never with a space, and never glued straight to the Latin, like `הAPI`.
+- Quotes are `""` or `„”`, chosen once for the whole screen.
+- A regular hyphen is fine in interface text. Keep the maqaf `־` for editorial and literary content.
+
+### Numbers and dates
+
+- Hebrew uses Western digits. Hebrew letter numerals like `א׳` or `תשפ״ז` belong only to the Hebrew calendar and traditional lists.
+- Format money with `Intl.NumberFormat("he-IL", { style: "currency", currency: "ILS" })` and dates with `Intl.DateTimeFormat("he-IL")`, so the shekel sign and the day, month, year order come out right. One format across the screen.
+
+### Copy
+
+- Hebrew verbs and adjectives carry gender. Slash forms like `הירשם/י` or `לחץ/י כאן` read as clumsy, and the masculine imperative alone leaves part of the audience out. Buttons and labels use the noun or infinitive, like `הרשמה`, `שמירה`, `חיפוש` or `להמשך`. Longer text addresses the reader in a way that does not need gender, or in the plural.
+- The rules from the Copy pass hold. No exclamation marks, no greeting headline like `ברוך שובך, דמיר! 👋`, no trailing period on labels and buttons.
+- Hebrew hype words count as hype: מהפכני, פורץ דרך, קסום, חוויה חלקה, בלחיצת כפתור, ללא מאמץ, הדור הבא, משנה את כללי המשחק, מבוסס בינה מלאכותית. Say what the thing does.
+- Copy that reads translated, like `קח את העסק שלך לשלב הבא` or `בוא נתחיל!`, gets rewritten as plain Hebrew in one register.
+- Short labels: `חיפוש`, not `חפש כל דבר...`.
+
 ## Scripture and quoted text
 
 - Quranic verses, hadith, poetry and other quoted text are copied exactly from a verified source, with their marks, and never rewritten, shortened mid verse or invented. If the screen has placeholder scripture, replace it with real text from a source the user names, or leave the exact slot and say so in the report.
 - Set it in a face made for reading it, like Amiri Quran or a mushaf font for Quranic text, separate from the interface family.
+- The same holds for Hebrew scripture and liturgy. Copy it with its nikud and cantillation marks from a verified source, and set it in a face drawn for those marks, like Taamey Frank or SBL Hebrew.
 - No gradient, glow, outline or animation on scripture. It carries the screen through the type, the space around it and the paper it sits on.
 - The end of a verse is marked with ۝ (U+06DD) and its number in the digits of the screen, not with a glowing pill.
 
