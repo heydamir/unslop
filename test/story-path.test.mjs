@@ -66,3 +66,9 @@ test("serves a symlink inside root that points inside it", () => {
   const { root } = setup();
   assert.equal(resolveStoryFile(root, "/__story/link-in"), join(root, "asset.txt"));
 });
+
+test("rejects a sub-directory, which is not a file to serve", () => {
+  const { root } = setup();
+  assert.equal(resolveStoryFile(root, "/__story/sub"), null);
+  assert.equal(resolveStoryFile(root, "/__story/sub/"), null);
+});
