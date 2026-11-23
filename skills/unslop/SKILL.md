@@ -186,7 +186,7 @@ A short video where the screen unslops itself step by step, with red redlines on
 
 It adds a few minutes, so make it only when the user wants it.
 
-1. **One story file.** Build `unslop-story/story.html`, a standalone copy of the original screen with its styles in the file. Keep the original rules as they are, they are step 0.
+1. **One story file.** Build `unslop-story/story.html`, a standalone copy of the original screen with its styles in the file. Keep the original rules as they are, they are step 0. Step 0 is the real original, never an invented before: do not caricature it into a max-slop version, add gradients, glow pills or emoji tiles it never had, or write copy it never said — viewers read step 0 as the actual screen, so a made-up before is a fake before/after. If the original was never captured, capture it first with `snapshot.mjs` or a live screenshot; if it cannot be captured, skip the video.
 2. **Steps.** Three to five, merging passes so each one changes something you can see, like `Spacing`, `Color and icons`, `Type and copy`, `Details`. A new chart or visual goes into the last step. List them in the head as `<meta name="unslop-steps" content="Spacing, Color and icons, Type and copy, Details">`. A name containing Spacing shows spacing measurements, one containing Details shows corner outlines.
 3. **Each step is CSS on top.** Write the changes of step 1 under `.s1`, step 2 under `.s2` and so on, like `.s1 .card { padding: 24px }` or `.s2 body { background-color: #141415 }`. The classes add up, so step 3 still has the rules of steps 1 and 2. Change values, never structure, so the browser can tween them.
 4. **What cannot tween, and how to handle it.**
@@ -203,7 +203,7 @@ It adds a few minutes, so make it only when the user wants it.
    - `data-slop="Gradient text"` and so on marks the slop for a short first beat, at most five, on the clearest examples that sit apart from each other, with short tags. It is optional, the reference video has none.
 6. **Only the screen and its background.** The video shows the story page as it is, with no extra window, border or shadow around it, so the page's own background fills the frame and the screen is the only box. If the screen sits in a window that grows to desktop proportions, anchor it to the left in the story so it widens to the right instead of gliding sideways. The story page renders 1440 wide and at least 900 tall, so do not size things from `100vh`, and keep `position: fixed` for background layers only.
 7. **Camera.** `<meta name="unslop-frame" content="0 0 960">` sets which part of the page fills the frame, as x, y and width in page pixels. Point x and y at the screen's own top left corner, so the frame starts with the page background around it, and crop close on where the most visible change happens, usually the sidebar or headline and the first cards.
-8. **Render.** `node <skill folder>/scripts/story.mjs unslop-story/story.html unslop-story.mp4`, square by default, `--wide` for 16:9. It needs Playwright and ffmpeg, so if either is missing, tell the user the one command that installs it. To watch it live first, run it with `--play` instead of the output path, and it loops in a browser window until closed. Pull a few frames with ffmpeg and look at them before you hand it over. Checking the story file and the video does not count toward the render limit of a run.
+8. **Render.** `node <skill folder>/scripts/story.mjs unslop-story/story.html unslop-story.mp4`, square by default, `--wide` for 16:9. It needs Playwright and ffmpeg, so if either is missing, tell the user the one command that installs it. To watch it live first, run it with `--play` instead of the output path, and it loops in a browser window until closed. Pull a few frames with ffmpeg and look at them before you hand it over. Put step 0 next to a screenshot of the real original and check they match; if step 0 does not look like the real original, do not ship the video. Checking the story file and the video does not count toward the render limit of a run.
 9. **The story file is a presentation piece.** The clean result still ships as normal code in the project's own stack, without `.s` classes or story attributes. Every video carries a small `unslop by @heydamir` credit, as the license asks.
 
 ## Do not
@@ -212,6 +212,7 @@ It adds a few minutes, so make it only when the user wants it.
 - Do not change what the product is. Keep its features, content and the order of sections unless the user asks for more. Placeholder content that means nothing may be replaced with content that does.
 - Do not replace removed decoration with new decoration, and do not swap one trend for another like glass, grain, noise, neon or bento grids.
 - Do not invent features, claims or data.
+- Do not invent a fake before for the story video. Step 0 is the real original screen, not a caricature of it.
 - Do not fall back to the same look for every product. The direction decides the palette tint, type and visual, not habit.
 
 ## Checklist
@@ -234,3 +235,4 @@ It adds a few minutes, so make it only when the user wants it.
 - [ ] The first screen is composed as a whole with no dead empty band
 - [ ] No looping or bouncy motion, one easing curve, no animated layout properties
 - [ ] Template check. If you swapped the product name for another product's, would the screen still fit? If yes, push the direction harder in the copy, the visual and the signature detail
+- [ ] The story video's step 0 matches a screenshot of the real original, or there is no story video
