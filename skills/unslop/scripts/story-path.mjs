@@ -1,4 +1,4 @@
-import { existsSync, realpathSync } from "node:fs";
+import { existsSync, realpathSync, statSync } from "node:fs";
 import { isAbsolute, join, normalize, relative, sep } from "node:path";
 
 // Resolve a story-server request path to a file inside root, or null
@@ -8,8 +8,9 @@ import { isAbsolute, join, normalize, relative, sep } from "node:path";
 // A bare `target.startsWith(root)` is not enough: a sibling directory
 // whose name starts with the root's (`/a/site` vs `/a/site-private`)
 // passes it, and so does a symlink inside root that points outside.
-// Both sides are resolved to their real paths first, and the root
-// itself is rejected too — it is a directory, not a file to serve.
+// Both sides are resolved to their real paths first, and directories
+// (the root included) are rejected too — they are not files to serve,
+// and reading one would throw EISDIR inside the request handler.
 export function resolveStoryFile(root, requestPath) {
   const target = normalize(join(root, requestPath.replace(/^\/__story\//, "/")));
   if (!existsSync(target)) return null;
@@ -23,5 +24,6 @@ export function resolveStoryFile(root, requestPath) {
   }
   const rel = relative(realRoot, realTarget);
   if (rel === "" || rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) return null;
+  if (!statSync(realTarget).isFile()) return null;
   return realTarget;
 }
