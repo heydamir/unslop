@@ -1,5 +1,7 @@
 # unslop
 
+English · [Tiếng Việt](README.vi.md)
+
 Created by Damir Sokolovsky ([@heydamir](https://x.com/heydamir)), who started the [Unslopping series](https://x.com/heydamir/status/2115063463063998736) on X.
 
 ![A vibecoded dashboard unslopping itself, frame by frame](skills/unslop/references/refs/story-dashboard-frames.webp)
