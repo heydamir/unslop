@@ -109,3 +109,18 @@ test("--height 600 in space form sets the viewport height", (t) => {
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(pngSize(join(dir, "out.live.png")), { width: 1440, height: 600 });
 });
+
+test("a local file keeps an external stylesheet's rules in the snapshot", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "unslop-snapshot-css-"));
+  writeFileSync(join(dir, "styles.css"), "body { background: rgb(255, 0, 0) }");
+  writeFileSync(
+    join(dir, "page.html"),
+    '<!doctype html><html><head><link rel="stylesheet" href="styles.css"></head><body>ok</body></html>',
+  );
+  const out = join(dir, "out.html");
+  const result = run([join(dir, "page.html"), out]);
+  if (skipIfNoBrowser(t, result)) return;
+  assert.equal(result.status, 0, result.stderr);
+  const html = readFileSync(out, "utf8");
+  assert.match(html, /rgb\(255,\s*0,\s*0\)/, "the external file:// sheet was not inlined");
+});

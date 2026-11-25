@@ -1,7 +1,7 @@
 import { createRequire } from "node:module";
-import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const usage = "usage: node snapshot.mjs <url or local file> <out.html> [pass label] [--dark | --light] [--width 1440] [--height 810]";
 const args = process.argv.slice(2);
@@ -82,7 +82,20 @@ try {
     const pending = [...document.images].filter((image) => !image.complete);
     await Promise.race([Promise.all(pending.map(loaded)), pause(5000)]);
   });
-  const html = await page.evaluate(async ([label, scheme]) => {
+  // Chromium blocks fetch() of file:// stylesheets and denies cssRules access on
+  // an opaque origin, so a local page loses every external sheet. Read those
+  // files in Node and hand the text to the page (#38).
+  const localSheets = {};
+  const sheetHrefs = await page.evaluate(() =>
+    [...document.styleSheets].map((sheet) => sheet.href).filter(Boolean),
+  );
+  for (const href of sheetHrefs) {
+    if (!href.startsWith("file:")) continue;
+    try {
+      localSheets[href] = readFileSync(fileURLToPath(href), "utf8");
+    } catch {}
+  }
+  const html = await page.evaluate(async ([label, scheme, localSheets]) => {
     const LIMIT = 3_000_000;
     const absolute = (value, base = location.href) => {
       try {
@@ -131,7 +144,7 @@ try {
       let base = location.href;
       if (sheet.href) {
         base = sheet.href;
-        text = await fetch(sheet.href).then((response) => (response.ok ? response.text() : "")).catch(() => "");
+        text = localSheets[sheet.href] ?? (await fetch(sheet.href).then((response) => (response.ok ? response.text() : "")).catch(() => ""));
       } else if (owner && owner.textContent.trim()) {
         text = owner.textContent;
       }
@@ -139,6 +152,15 @@ try {
         try {
           text = [...sheet.cssRules].map((rule) => rule.cssText).join("\n");
         } catch {}
+      }
+      if (!text) {
+        // Never drop a sheet we could not read: keep an absolute link instead
+        // of silently producing a style-less snapshot (#38).
+        if (owner && owner.tagName === "LINK") {
+          owner.setAttribute("href", sheet.href);
+          owner.setAttribute("data-unslop-unreadable", "");
+        }
+        continue;
       }
       const media = sheet.media && sheet.media.mediaText;
       css.push(media && media !== "all" ? `@media ${media} {\n${text}\n}` : text);
@@ -152,7 +174,10 @@ try {
       const selected = images[index].currentSrc;
       if (selected) node.setAttribute("src", selected);
     });
-    copy.querySelectorAll("script, noscript, link[rel='stylesheet'], link[rel='preload'], link[rel='modulepreload'], style").forEach((node) => node.remove());
+    copy.querySelectorAll("script, noscript, link[rel='stylesheet'], link[rel='preload'], link[rel='modulepreload'], style").forEach((node) => {
+      if (!node.hasAttribute("data-unslop-unreadable")) node.remove();
+    });
+    copy.querySelectorAll("[data-unslop-unreadable]").forEach((node) => node.removeAttribute("data-unslop-unreadable"));
     copy.querySelectorAll("[srcset]").forEach((node) => node.removeAttribute("srcset"));
     copy.querySelectorAll("source").forEach((node) => node.remove());
     copy.querySelectorAll("[loading]").forEach((node) => node.removeAttribute("loading"));
@@ -186,7 +211,7 @@ try {
       copy.querySelector("head").prepend(meta);
     }
     return "<!doctype html>\n" + copy.outerHTML;
-  }, [label ?? "", scheme]);
+  }, [label ?? "", scheme, localSheets]);
   mkdirSync(dirname(resolve(out)), { recursive: true });
   writeFileSync(resolve(out), html);
   await page.evaluate(() => window.scrollTo(0, 0));
