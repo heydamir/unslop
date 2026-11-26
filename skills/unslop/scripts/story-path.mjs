@@ -1,5 +1,5 @@
 import { existsSync, realpathSync } from "node:fs";
-import { isAbsolute, join, normalize, relative, sep } from "node:path";
+import { extname, isAbsolute, join, normalize, relative, sep } from "node:path";
 
 // Resolve a story-server request path to a file inside root, or null
 // when the path does not name a file under it. The request path has
@@ -24,4 +24,13 @@ export function resolveStoryFile(root, requestPath) {
   const rel = relative(realRoot, realTarget);
   if (rel === "" || rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) return null;
   return realTarget;
+}
+
+// Chrome refuses to run a module script, or import a JSON module, that
+// comes back as application/octet-stream, so .mjs and .json need their
+// real types. Images, fonts and video load whatever the type says.
+const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".mjs": "text/javascript", ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".avif": "image/avif", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".woff": "font/woff", ".mp4": "video/mp4" };
+
+export function contentType(file) {
+  return types[extname(file).toLowerCase()] ?? "application/octet-stream";
 }

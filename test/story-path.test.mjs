@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, realpathSync, symlinkSync, writeFileSync } from
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { resolveStoryFile } from "../skills/unslop/scripts/story-path.mjs";
+import { contentType, resolveStoryFile } from "../skills/unslop/scripts/story-path.mjs";
 
 // A root with a sibling whose name starts with the root's, the shape
 // the prefix check gets wrong: /tmp/x/site vs /tmp/x/site-private.
@@ -65,4 +65,14 @@ test("rejects a symlink inside root that points outside it", () => {
 test("serves a symlink inside root that points inside it", () => {
   const { root } = setup();
   assert.equal(resolveStoryFile(root, "/__story/link-in"), join(root, "asset.txt"));
+});
+
+test("module scripts and JSON go out with types Chrome will run", () => {
+  assert.equal(contentType("/site/app.mjs"), "text/javascript");
+  assert.equal(contentType("/site/data.json"), "application/json");
+  assert.equal(contentType("/site/app.js"), "text/javascript");
+});
+
+test("an unknown extension falls back to octet-stream", () => {
+  assert.equal(contentType("/site/model.glb"), "application/octet-stream");
 });
