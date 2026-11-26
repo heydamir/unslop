@@ -4,7 +4,7 @@ Created by Damir Sokolovsky ([@heydamir](https://x.com/heydamir)), who started t
 
 ![A vibecoded dashboard unslopping itself, frame by frame](skills/unslop/references/refs/story-dashboard-frames.webp)
 
-unslop is a skill for Claude Code, Codex and Google Antigravity that turns vibecoded, AI-looking UI into a designed interface with its own character. It finds the slop first, the purple gradients, glows, emoji labels, shouty copy and uneven spacing, then sets a direction from your product and fixes the screen pass by pass like a designer doing a redline review. It works in whatever your screen is built with, like Next.js, React, Vue, Svelte, Tailwind or plain HTML and CSS, on dashboards, apps and landing pages, and even on a live site when all you have is a link.
+unslop is a skill for Claude Code, Codex, Google Antigravity and DeepSeek Harness that turns vibecoded, AI-looking UI into a designed interface with its own character. It finds the slop first, the purple gradients, glows, emoji labels, shouty copy and uneven spacing, then sets a direction from your product and fixes the screen pass by pass like a designer doing a redline review. It works in whatever your screen is built with, like Next.js, React, Vue, Svelte, Tailwind or plain HTML and CSS, on dashboards, apps and landing pages, and even on a live site when all you have is a link.
 
 ## Install
 
@@ -56,7 +56,11 @@ mkdir -p ~/.gemini/config/skills && cp -r unslop/skills/unslop ~/.gemini/config/
 
 For a single project, copy it into `.agents/skills/` inside that project instead.
 
-To snapshot a live site or create a story video, install Playwright and its Chromium browser from the project directory where you run the skill:
+DeepSeek Harness reads the same `~/.agents/skills` and `.agents/skills` folders, so a copy installed either way above is picked up there too, with no plugin needed. Ask for it in your own words, or load the `unslop` skill by name.
+
+To screenshot a screen, or measure its spacing and type, you need nothing extra: `node <skill folder>/scripts/render.mjs shot <file-or-url> out.png` drives the Chrome or Edge already on the machine. `snapshot` saves a page's DOM after scripts run, and `probe` prints element rects, computed fonts, padding and document overflow as JSON, which turns the 4px check into numbers instead of pixel counting. Animations finish instantly by default, so an entrance fade cannot photograph as an empty page.
+
+Playwright is still the richer option for a live site that lazy-loads as you scroll, and it is required for a story video, so install it and its Chromium browser from the project directory where you run the skill:
 
 ```bash
 npm install -D playwright
