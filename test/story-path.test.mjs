@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, realpathSync, symlinkSync, writeFileSync } from
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { resolveStoryFile } from "../skills/unslop/scripts/story-path.mjs";
+import { decodeStoryPath, resolveStoryFile } from "../skills/unslop/scripts/story-path.mjs";
 
 // A root with a sibling whose name starts with the root's, the shape
 // the prefix check gets wrong: /tmp/x/site vs /tmp/x/site-private.
@@ -65,4 +65,13 @@ test("rejects a symlink inside root that points outside it", () => {
 test("serves a symlink inside root that points inside it", () => {
   const { root } = setup();
   assert.equal(resolveStoryFile(root, "/__story/link-in"), join(root, "asset.txt"));
+});
+
+test("decodes an escaped request path and drops the query", () => {
+  assert.equal(decodeStoryPath("/__story/50%25%20off.png?v=2"), "/__story/50% off.png");
+});
+
+test("a malformed escape decodes to null instead of throwing", () => {
+  assert.equal(decodeStoryPath("/__story/50%off.png"), null);
+  assert.equal(decodeStoryPath("/__story/%E0%A4%A"), null);
 });

@@ -1,6 +1,18 @@
 import { existsSync, realpathSync } from "node:fs";
 import { isAbsolute, join, normalize, relative, sep } from "node:path";
 
+// Decode a story-server request URL to its path, or null when the
+// URL holds an escape that does not decode, like the `%of` in an
+// unescaped `50%off.png`. decodeURIComponent throws on those, and a
+// throw inside the request handler takes the whole render down.
+export function decodeStoryPath(url) {
+  try {
+    return decodeURIComponent(new URL(url, "http://local").pathname);
+  } catch {
+    return null;
+  }
+}
+
 // Resolve a story-server request path to a file inside root, or null
 // when the path does not name a file under it. The request path has
 // already had its query string stripped and its escapes decoded.
