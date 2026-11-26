@@ -39,7 +39,14 @@ if (!url || !out) {
 }
 // A path on disk is a page too: a bare file path is not a URL, and
 // Playwright rejects it with a protocol error, so turn it into one.
-const target = statSync(url, { throwIfNoEntry: false })?.isFile() ? pathToFileURL(resolve(url)).href : url;
+const onDisk = statSync(url, { throwIfNoEntry: false })?.isFile();
+// Anything else has to carry a scheme, or Playwright fails with a
+// protocol error that does not say the path was wrong.
+if (!onDisk && !/^[a-z][a-z\d+.-]*:/i.test(url)) {
+  console.error(`"${url}" is not a file on disk or a URL like https://example.com`);
+  process.exit(1);
+}
+const target = onDisk ? pathToFileURL(resolve(url)).href : url;
 
 async function browserKit() {
   for (const name of ["playwright", "playwright-core"]) {

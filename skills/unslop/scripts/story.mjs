@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 import { createServer } from "node:http";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { dirname, extname, join, resolve } from "node:path";
 import { resolveStoryFile } from "./story-path.mjs";
@@ -12,6 +12,11 @@ const wide = args.includes("--wide");
 const play = args.includes("--play");
 if (!input || (!out && !play)) {
   console.error(usage);
+  process.exit(1);
+}
+const file = resolve(input);
+if (!statSync(file, { throwIfNoEntry: false })?.isFile()) {
+  console.error(`no story file at ${file}`);
   process.exit(1);
 }
 
@@ -37,7 +42,6 @@ if (!play) {
   }
 }
 
-const file = resolve(input);
 const root = dirname(file);
 const html = readFileSync(file, "utf8");
 // A meta tag is valid HTML whatever order its attributes are in and

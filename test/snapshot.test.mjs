@@ -109,3 +109,17 @@ test("--height 600 in space form sets the viewport height", (t) => {
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(pngSize(join(dir, "out.live.png")), { width: 1440, height: 600 });
 });
+
+test("a local path that does not exist fails with a clear error, not a stack trace", () => {
+  const { dir } = fixture();
+  const result = run([join(dir, "missing.html"), "out.html"]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /is not a file on disk or a URL/);
+});
+
+test("a folder is not taken for a page", () => {
+  const { dir } = fixture();
+  const result = run([dir, "out.html"]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /is not a file on disk or a URL/);
+});

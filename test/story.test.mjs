@@ -87,3 +87,11 @@ test("a valid unslop-frame is accepted", () => {
 test("no unslop-frame tag falls back to the default frame", () => {
   assert.ok(pastMeta(run(goodMeta())), "missing frame tag was rejected");
 });
+
+test("a story file that does not exist fails with a clear error, not a stack trace", () => {
+  const dir = mkdtempSync(join(tmpdir(), "unslop-story-"));
+  const result = spawnSync(process.execPath, [script, join(dir, "missing.html"), join(dir, "out.mp4")], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /no story file at/);
+  assert.doesNotMatch(result.stderr, /ENOENT/);
+});
